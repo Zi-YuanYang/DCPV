@@ -61,6 +61,8 @@ python Test_NDB.py --train_set_file xxxx --test_set_file xxxx --id_num xxx --pat
 * test_set_file: the path of testing text file.
 * des_path: the path of saving checkpoints.
 * path_rst: the path of saving results.
-* 
+* model_path: the path of stored checkpoint
+
+  
 #### Acknowledgments
 Thanks to my all cooperators, they contributed so much to this work.
