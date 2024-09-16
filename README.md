@@ -39,6 +39,12 @@ We set the recognition network as CCNet as default, you can change it to other n
 python train.py --id_num xxxx --train_set_file xxxx --test_set_file xxxx --des_path xxxx --path_rst xxxx
 ```
 
+#### Vlidation
+Our negative database is only utilized in the reference stage, so please validate the performance as follows:
+```
+python Test_NDB.py --train_set_file xxxx --test_set_file xxxx --id_num xxx --path_rst xxx --batch_size xxxx --model_path xxx
+```
+
 * batch_size: the size of batch to be used for local training. (default: ```1024```)
 * epoch_num: the number of total training epoches. (default: ```3000```)
 * temp: the value of the tempture in our contrastive loss. (default: ```0.07```)
@@ -55,13 +61,6 @@ python train.py --id_num xxxx --train_set_file xxxx --test_set_file xxxx --des_p
 * test_set_file: the path of testing text file.
 * des_path: the path of saving checkpoints.
 * path_rst: the path of saving results.
-
-
-#### Vlidation
-Our negative database is only utilized in the reference stage, so please validate the performance as follows:
-```
-python Test_NDB.py --train_set_file xxxx --test_set_file xxxx --id_num xxx --path_rst xxx --batch_size xxxx --model_path xxx
-```
-
+* 
 #### Acknowledgments
 Thanks to my all cooperators, they contributed so much to this work.
