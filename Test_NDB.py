@@ -388,7 +388,6 @@ def test_binary(model):
         codes = codes.cpu().detach().numpy()
 
         temp_code = []
-        # [code_list.append(np.array_str(codes[i])) for i in range(data.shape[0])]   # 维度有问题
         [temp_code.append(codes[i].tolist()) for i in range(data.shape[0])]
         y = target.cpu().detach().numpy()
 
@@ -653,7 +652,6 @@ def test_binary_long_time(model):
         codes = codes.cpu().detach().numpy()
 
         temp_code = []
-        # [code_list.append(np.array_str(codes[i])) for i in range(data.shape[0])]   # 维度有问题
         [temp_code.append(codes[i].tolist()) for i in range(data.shape[0])]
         y = target.cpu().detach().numpy()
 
@@ -930,7 +928,6 @@ def test_binary_long_time_dcpr(model):
         codes = codes.cpu().detach().numpy()
 
         temp_code = []
-        # [code_list.append(np.array_str(codes[i])) for i in range(data.shape[0])]   # 维度有问题
         [temp_code.append(codes[i].tolist()) for i in range(data.shape[0])]
         y = target.cpu().detach().numpy()
 
@@ -1451,9 +1448,7 @@ if __name__== "__main__" :
     parser.add_argument("--des_path", type=str, default='./results/checkpoint/')
     parser.add_argument("--path_rst", type=str, default='./results/rst_test/')
     parser.add_argument("--last_path",type=str,default='/data/YZY/Negative_Palm/Only_Hy_No_Tanh_Med_Arc_2/checkpoint/net_params.pth')
-    # parser.add_argument("--last_path",type=str,default='./checkpoint/net_params.pth')
-    # parser.add_argument("--best_path",type=str,default='/data/YZY/Negative_Palm/Only_Hy_No_Tanh_Med_Arc_2/checkpoint/net_params_best.pth')
-    parser.add_argument("--best_path",type=str,default='./checkpoint/net_params_best.pth')
+    parser.add_argument("--model_path",type=str,default='./checkpoint/net_params_best.pth')
     args = parser.parse_args()
     # args = parser.parse_args()
 
@@ -1494,50 +1489,14 @@ if __name__== "__main__" :
     print('%s' % (time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())))
 
     print('------Init Model------')
-    # net = co3net(num_classes=num_classes)
-    # best_net = co3net(num_classes=num_classes)
-    # net = ccnet(num_classes=num_classes,weight=weight_chan)
-    # best_net = ccnet(num_classes=num_classes,weight=weight_chan)
-
 
     net = ccnet_hash_can(num_classes=num_classes,weight=weight_chan)
     best_net = ccnet_hash_can(num_classes=num_classes,weight=weight_chan)
-    # net = co3net_hash_can(num_classes=num_classes)
-    # best_net = co3net_hash_can(num_classes=num_classes)
 
-    # net.load_state_dict(torch.load(args.last_path))
-    temp_net = ccnet_hash_can(num_classes = 600,weight = weight_chan)
-    for key in temp_net.state_dict().keys():
-        if 'arclayer' not in key:
-            best_net.state_dict()[key].data.copy_(temp_net.state_dict()[key])
+    best_net.load_state_dict(torch.load(args.model_path),strict=False)
 
-    # best_net.load_state_dict(torch.load(args.best_path),strict=False)
-
-
-    # net.cuda()
-    # source_net.load_state_dict(torch.load('./saved_checkpoint/Tongji/net_params.pth'),strict=False)
-    # print('Test NDB')
-    # print('Test OnlyNDB')
-    # test_binary_long_time(best_net)
-
-    # print('Hash Binary Test')
-    # print('Hash Binary Test')
-    # print('Test only biohashing')
-    # test_binary_hash(best_net)
 
     print('DCPR Test')
     print('DCPR Test')
     print('Test DCPR')
     test_binary_long_time_dcpr(best_net)
-
-
-    # print('best_best')
-    # print('best_best')
-    # print('best_best')
-    # test(best_net)
-    # print('Best Binary')
-    # print('Best Binary')
-    # print('Best Binary')
-    # test_binary(best_net)
-
-    # test_binary_hash()
