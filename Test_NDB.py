@@ -35,16 +35,14 @@ def generate_entry(s, i):
 
     ## *->1 1->2 0->0
     m = len(s)
-    k = i + 1  # 确定的位数
+    k = i + 1  
     v = ['1'] * m
     specified_bits = random.sample(range(m), k)
 
-    # 其中 i 个位的值与 s 中的位不同
     for idx in range(i):
         bit = specified_bits[idx]
         v[bit] = '2' if s[bit] == '0' else '0'
 
-    # 其他确定的位与 s 中的位相同
     for idx in range(i, k):
         bit = specified_bits[idx]
         if s[bit] == '1':
@@ -77,7 +75,7 @@ def k_hidden_algorithm(s_list, r, p_list):
         # NDBs = np.zeros((N,2000))
         while ind < N:
             rnd = random.random()
-            i = next(i for i, q in enumerate(Q) if q > rnd)  # 找到满足条件的i
+            i = next(i for i, q in enumerate(Q) if q > rnd)
             # print(i)
             v = generate_entry(s, i)
             numbers = np.fromiter(v, dtype=int) - 1
@@ -90,35 +88,6 @@ def k_hidden_algorithm(s_list, r, p_list):
 
     return NDBs_list
 
-
-#
-# def neg_bank_generation(ndb):
-#     temp_matrix = []
-#     for i in range(len(ndb)):
-#         temp = ndb[i]
-#         j=0
-#         print(i)
-#         for code_str in temp:
-#             # break
-#             # print(code_str)
-#             code_str = code_str.replace('1','2')
-#             # print(code_str)
-#             code_str = code_str.replace('*','1')
-#             # print(code_str)
-#             numbers = np.fromiter(code_str,dtype=int) - 1
-#             # print('1')
-#             numbers = np.expand_dims(numbers,axis=0)
-#             # print('1')
-#             if j == 0:
-#                 single_fea = numbers
-#             else:
-#                 single_fea = np.concatenate((single_fea,numbers),axis=1)
-#             j = j + 1
-#
-#         temp_matrix.append(single_fea)
-#             # break
-#     return temp_matrix
-#
 
 def test(model):
 
@@ -430,8 +399,6 @@ def test_binary(model):
     print('generate neg bank')
     # neg_bank = neg_bank_generation(neg_code)
 
-    #
-    #
     featDB_test = []
     iddb_test = []
 
@@ -478,24 +445,17 @@ def test_binary(model):
     # for i in range(len(ntrain)):
 
     for i in range(ntest):
-        # break 
         feat1 = featDB_test[i]
         # feat1 = feat1.reshape(feat1.shape[0],1)
         print('[Now / Total]: ', i, '/', ntest)
         for j in range(ntrain):
-            # break
             # feat2 = featDB_train[j]
             feat2 = neg_code[j]
             # feat2 = feat2.transpose()
+            
             dis = feat1 @ feat2
             dis = np.sum(dis) / feat2.shape[1]
             dis = np.arccos(np.clip(dis,-1,1)) / np.pi
-            # dis = np.dot(feat1,feat2) / feat2.shape[1]
-
-            # cosdis = np.dot(feat1, feat2)
-            # cosdis = cosdis / feat1.size
-            # dis = np.arccos(np.clip(cosdis, -1, 1)) / np.pi
-            # dis = 0.5 * (nbit - torch.matmul(codes.sign(), centroids.sign().t()))
 
             s.append(dis)
 
@@ -555,43 +515,6 @@ def test_binary(model):
 
     with open(binary_path_rst + 'veriEER/rank1.txt', 'w') as f:
         f.write('rank-1 acc: %.3f%%' % rankacc)
-    #
-    # print('\n\nReal EER of the test set...')
-    # # dataset EER of the test set (the gallery set is not used)
-    # s = []  # matching score
-    # l = []  # genuine / impostor matching
-    # n = featDB_test.shape[0]
-    # for i in range(n - 1):
-    #     feat1 = featDB_test[i]
-    #
-    #     for jj in range(n - i - 1):
-    #         j = i + jj + 1
-    #         feat2 = featDB_test[j]
-    #
-    #         cosdis = np.dot(feat1, feat2)
-    #         # dis = np.arccos(np.clip(cosdis, -1, 1)) / np.pi
-    #         cosdis = cosdis / feat1.size
-    #         dis = np.arccos(np.clip(cosdis, -1, 1)) / np.pi
-    #
-    #         s.append(dis)
-    #
-    #         if iddb_test[i] == iddb_test[j]:
-    #             l.append(1)
-    #         else:
-    #             l.append(-1)
-    #
-    # print('feature extraction about real EER done!\n')
-    #
-    # with open(binary_path_rst + 'veriEER/scores_EER_test.txt', 'w') as f:
-    #     for i in range(len(s)):
-    #         score = str(s[i])
-    #         label = str(l[i])
-    #         f.write(score + ' ' + label + '\n')
-    #
-    # sys.stdout.flush()
-    # os.system('python ./getGI.py' + '  ' + binary_path_rst + 'veriEER/scores_EER_test.txt scores_EER_test')
-    # os.system('python ./getEER.py' + '  ' + binary_path_rst + 'veriEER/scores_EER_test.txt scores_EER_test')
-
 
 
 
@@ -661,14 +584,9 @@ def test_binary_long_time(model):
             str_codes.append(code_list)
 
         if batch_id == 0:
-            # featDB_train = str_codes
             iddb_train = y
         else:
-            # featDB_train = np.concatenate((featDB_train, codes), axis=0)
-            # featDB_train = featDB_train.append(code_list)
-            # featDB_train = featDB_train + str_codes
             iddb_train = np.concatenate((iddb_train, y))
-        # break
 
     featDB_train = str_codes
     classNumel = len(set(iddb_train))
@@ -677,25 +595,7 @@ def test_binary_long_time(model):
     trainNum = num_training_samples // classNumel
     print('[classNumel, imgs/class]: ', classNumel, trainNum)
     print('\n')
-    #
-    # for i in range(len(featDB_train))
-    #     if '.' in featDB_train[i]:
-    #         print('oo')
-    #
 
-    ### Generate Neg Database
-    # print('Generate Negative Database')
-    # ### Hyper Para
-    # K = 4
-    # r = 2
-    # p_list = generate_p_list(K)
-    # # neg_code = []
-    # neg_code = k_hidden_algorithm(featDB_train, r, p_list)
-    # print('generate neg bank')
-    # neg_bank = neg_bank_generation(neg_code)
-
-    #
-    #
     featDB_test = []
     iddb_test = []
 
@@ -759,20 +659,11 @@ def test_binary_long_time(model):
         print('[Now / Total]: ', j, '/', ntrain)
         # for j in range(ntrain):
         for i in range(ntest):
-            # break
-            # feat2 = featDB_train[j]
-            # feat2 = neg_code[j]
-            # feat2 = feat2.transpose()
+
             feat1 = featDB_test[i]
             dis = feat1 @ feat2
             dis = -1 * np.sum(dis) / feat2.shape[1]
             dis = np.arccos(np.clip(dis,-1,1)) / np.pi
-            # dis = np.dot(feat1,feat2) / feat2.shape[1]
-
-            # cosdis = np.dot(feat1, feat2)
-            # cosdis = cosdis / feat1.size
-            # dis = np.arccos(np.clip(cosdis, -1, 1)) / np.pi
-            # dis = 0.5 * (nbit - torch.matmul(codes.sign(), centroids.sign().t()))
 
             s.append(dis)
 
@@ -832,43 +723,6 @@ def test_binary_long_time(model):
 
     with open(binary_path_rst + 'veriEER/rank1.txt', 'w') as f:
         f.write('rank-1 acc: %.3f%%' % rankacc)
-    #
-    # print('\n\nReal EER of the test set...')
-    # # dataset EER of the test set (the gallery set is not used)
-    # s = []  # matching score
-    # l = []  # genuine / impostor matching
-    # n = featDB_test.shape[0]
-    # for i in range(n - 1):
-    #     feat1 = featDB_test[i]
-    #
-    #     for jj in range(n - i - 1):
-    #         j = i + jj + 1
-    #         feat2 = featDB_test[j]
-    #
-    #         cosdis = np.dot(feat1, feat2)
-    #         # dis = np.arccos(np.clip(cosdis, -1, 1)) / np.pi
-    #         cosdis = cosdis / feat1.size
-    #         dis = np.arccos(np.clip(cosdis, -1, 1)) / np.pi
-    #
-    #         s.append(dis)
-    #
-    #         if iddb_test[i] == iddb_test[j]:
-    #             l.append(1)
-    #         else:
-    #             l.append(-1)
-    #
-    # print('feature extraction about real EER done!\n')
-    #
-    # with open(binary_path_rst + 'veriEER/scores_EER_test.txt', 'w') as f:
-    #     for i in range(len(s)):
-    #         score = str(s[i])
-    #         label = str(l[i])
-    #         f.write(score + ' ' + label + '\n')
-    #
-    # sys.stdout.flush()
-    # os.system('python ./getGI.py' + '  ' + binary_path_rst + 'veriEER/scores_EER_test.txt scores_EER_test')
-    # os.system('python ./getEER.py' + '  ' + binary_path_rst + 'veriEER/scores_EER_test.txt scores_EER_test')
-
 
 def test_binary_long_time_dcpr(model):
 
@@ -883,8 +737,6 @@ def test_binary_long_time_dcpr(model):
     # path_rst +
     path_hard = os.path.join(binary_path_rst, 'rank1_hard')
 
-    # train_set_file = './data/train_IITD.txt'
-    # test_set_file = './data/test_IITD.txt'
 
     trainset = MyDataset(txt=train_set_file, transforms=None, train=False)
     testset = MyDataset(txt=test_set_file, transforms=None, train=False)
@@ -937,12 +789,8 @@ def test_binary_long_time_dcpr(model):
             str_codes.append(code_list)
 
         if batch_id == 0:
-            # featDB_train = str_codes
             iddb_train = y
         else:
-            # featDB_train = np.concatenate((featDB_train, codes), axis=0)
-            # featDB_train = featDB_train.append(code_list)
-            # featDB_train = featDB_train + str_codes
             iddb_train = np.concatenate((iddb_train, y))
         # break
 
@@ -953,25 +801,7 @@ def test_binary_long_time_dcpr(model):
     trainNum = num_training_samples // classNumel
     print('[classNumel, imgs/class]: ', classNumel, trainNum)
     print('\n')
-    #
-    # for i in range(len(featDB_train))
-    #     if '.' in featDB_train[i]:
-    #         print('oo')
-    #
 
-    ### Generate Neg Database
-    # print('Generate Negative Database')
-    # ### Hyper Para
-    # K = 4
-    # r = 2
-    # p_list = generate_p_list(K)
-    # # neg_code = []
-    # neg_code = k_hidden_algorithm(featDB_train, r, p_list)
-    # print('generate neg bank')
-    # neg_bank = neg_bank_generation(neg_code)
-
-    #
-    #
     featDB_test = []
     iddb_test = []
 
